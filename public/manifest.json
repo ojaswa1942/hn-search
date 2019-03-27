@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "HN Search",
+  "name": "HN Search powered by Algolia",
   "icons": [
     {
       "src": "favicon.ico",

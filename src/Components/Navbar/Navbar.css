@@ -1,0 +1,51 @@
+.navbar-parent{
+	margin: 0 auto;
+}
+
+.nav-header {
+    position: fixed;
+    z-index: 15;
+    height: 60px;
+    padding: 5px;
+    background: #FF742B;
+    border: none;
+}
+
+.logo-wrapper {
+    float: left;
+    width: 230px;
+}
+.logoNav{
+    float: left;
+    margin-right: 10px;
+    width: 48px;
+    height: 48px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.logo-name{
+    color: white;
+    font-size: 18px;
+    padding-top: 6px;
+    float: left;
+    line-height: 1em;
+    font-family: Verdana, Geneva, sans-serif !important;
+    text-align: left;
+}
+
+@media screen and (max-width: 1200px){
+	.nav-header {
+    	width: 100%;
+	}
+}
+@media screen and (min-width: 1200px){
+	.navbar-parent{
+		width: 80%;
+	}
+	.nav-header {
+   		width: 80%;
+	}
+
+}

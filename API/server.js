@@ -2,7 +2,6 @@ const express=require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
-const knex = require('knex');
 const xss = require('xss');
 const cookieParser = require('cookie-parser');
 const signin = require('./controllers/signin');
@@ -13,32 +12,32 @@ const timeCheck = require('./middleware/timeCheck');
 const lost = require('./controllers/lost');
 const chatbot = require('./controllers/chatbot');
 const score = require('./controllers/score');
-const question = require('./controllers/question');
+let question;
 const hint = require('./controllers/hint');
 const newGame = require('./controllers/newGame');
 const serviceAcc = require('./service-accounts.json');
 require("dotenv").config();
 
-const db = knex({
-  client: 'mysql',
-  connection: {
-    host : serviceAcc.host,
-    user : serviceAcc.user,
-    password : serviceAcc.password,
-    database : serviceAcc.database
-  }
-});
+// const db = knex({
+//   client: 'mysql',
+//   connection: {
+//     host : serviceAcc.host,
+//     user : serviceAcc.user,
+//     password : serviceAcc.password,
+//     database : serviceAcc.database
+//   }
+// });
 
-const dbTrace = knex({
-  client: 'mysql',
-  connection: {
-    host : serviceAcc.host,
-    user : serviceAcc.user,
-    password : serviceAcc.password,
-    database : 'tracetrove'
-  }
-});
-
+// const dbTrace = knex({
+//   client: 'mysql',
+//   connection: {
+//     host : serviceAcc.host,
+//     user : serviceAcc.user,
+//     password : serviceAcc.password,
+//     database : 'tracetrove'
+//   }
+// });
+let db, dbTrace;
 const app=express();
 
 app.use(cors());
