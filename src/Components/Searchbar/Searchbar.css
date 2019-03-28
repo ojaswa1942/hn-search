@@ -56,3 +56,23 @@
 .powered-by a img {
 	margin-top: 5px;
 }
+
+@media screen and (max-width: 768px){
+    .logo-name{
+        display: none;
+    }
+    .search-wrapper{
+       width: calc(90% - 60px);
+    }
+}
+@media screen and (max-width: 480px){
+  .powered-by{
+    display: none;
+  }
+  .search-icon{
+    /*display: none;*/
+  }
+  .searchbar-input-wrapper{
+        width: calc(100% - 40px) !important;
+  }
+}

@@ -4,6 +4,7 @@ import './Navbar.css';
 import hnLogo from '../../assets/logo-hn-search.png'
 import {Link} from 'react-router-dom'
 import Searchbar from '../Searchbar/Searchbar'
+import Filter from '../Filter/Filter'
 
 class Navbar extends Component {
 	constructor(props) {
@@ -27,8 +28,8 @@ class Navbar extends Component {
 						</Link>
 					</div>
 					
-					<Searchbar />
-					
+					<Searchbar updateSearchQuery={this.props.updateSearchQuery} />
+					<Filter {...this.props} />
 				</header>
 		      </div>
 	    );

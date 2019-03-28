@@ -47,5 +47,9 @@
 	.nav-header {
    		width: 80%;
 	}
-
+}
+@media screen and (max-width: 768px){
+    .logo-wrapper{
+        width: 70px;
+    }
 }

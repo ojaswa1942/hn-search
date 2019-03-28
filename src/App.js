@@ -7,25 +7,73 @@ const initialState = {
   user: {
     name: ''
   },
-  isLoggedIn: false
+  searchSettings: {
+    type: '',
+    dateRange: '',
+    sort: '',
+    query: ''
+  },
+  isLoggedIn: false,
+  searchRes: {
+    results: [],
+    number: 0,
+    timeTaken: 0
+  }
 }
 
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      user: {
-        name: ''
-      },
-      isLoggedIn: false
-    }
+    this.state = initialState
   }
 
+  updateSearchQuery = (value) =>{
+    this.setState({
+      searchSettings: {
+        ...this.state.searchSettings, 
+        query: value
+      }
+    });
+  }
+
+  updateSearchDateRange = (value) =>{
+    this.setState({
+      searchSettings: {
+        ...this.state.searchSettings, 
+        dateRange: value
+      }
+    })
+  }
+  updateSearchType = (value) =>{
+    this.setState({
+      searchSettings: {
+        ...this.state.searchSettings, 
+        type: value
+      }
+    })
+  }
+  updateSearchSort = (value) =>{
+    this.setState({
+      searchSettings: {
+        ...this.state.searchSettings, 
+        sort: value
+      }
+    })
+  }
   updateUserInfo = (value) =>{
     this.setState({user: {
         name: value.name
       }
     });
+  }
+  updateSearchStats = (number, time) =>{
+    this.setState({
+      searchRes: {
+        ...this.state.searchRes, 
+        number: number,
+        timeTaken: time
+      }
+    })
   }
   updateLoginState = (value) =>{
     this.setState({isLoggedIn: value});
@@ -46,10 +94,26 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state);
     return (
       <div className="App">
-        <Navbar />
-
+        <Navbar
+          updateSearchSort={this.updateSearchSort}
+          updateSearchType={this.updateSearchType}
+          updateSearchDateRange={this.updateSearchDateRange}
+          updateSearchQuery={this.updateSearchQuery}
+          searchStats={this.state.searchRes}
+        />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        {this.state.searchSettings.query}
       </div>
     );
   }
