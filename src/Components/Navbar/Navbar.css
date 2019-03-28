@@ -36,12 +36,12 @@
 }
 
 @media screen and (max-width: 1200px){
-	.nav-header {
+	.nav-header, .search-results-main {
     	width: 100%;
 	}
 }
 @media screen and (min-width: 1200px){
-	.navbar-parent{
+	.navbar-parent, .search-results-main, .search-results{
 		width: 80%;
 	}
 	.nav-header {

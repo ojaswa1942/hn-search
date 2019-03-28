@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Navbar from './Components/Navbar/Navbar'
+import Results from './Components/Results/Results'
 import {Route, Switch} from 'react-router-dom';
 
 const initialState = {
@@ -8,9 +9,9 @@ const initialState = {
     name: ''
   },
   searchSettings: {
-    type: '',
-    dateRange: '',
-    sort: '',
+    type: 'story',
+    dateRange: null,
+    sort: 'search',
     query: ''
   },
   isLoggedIn: false,
@@ -22,11 +23,13 @@ const initialState = {
 }
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = initialState
   }
+  componentDidMount(){
 
+  }
   updateSearchQuery = (value) =>{
     this.setState({
       searchSettings: {
@@ -94,7 +97,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state);
     return (
       <div className="App">
         <Navbar
@@ -104,16 +106,12 @@ class App extends Component {
           updateSearchQuery={this.updateSearchQuery}
           searchStats={this.state.searchRes}
         />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        {this.state.searchSettings.query}
+        <Route path={['/',"/hello"]} render={(props) => {
+          return(
+            <Results {...props} />
+            )
+          }}
+        />
       </div>
     );
   }
