@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Navbar from './Components/Navbar/Navbar'
 import Results from './Components/Results/Results'
+import Login from './Components/Login/Login'
 import {Route, Switch} from 'react-router-dom';
 import Pagination from './Components/Pagination/Pagination'
 
@@ -129,6 +130,7 @@ class App extends Component {
           updateSearchQuery={this.updateSearchQuery}
           searchSettings={this.state.searchSettings}
           searchStats={this.state.searchRes}
+          isLoggedIn={this.state.isLoggedIn}
         />
         <Route path="/query=:query?/sort=:sort/page=:page/dateRange=:dateRange/type=:type" render={(props) => {
          return(
@@ -143,6 +145,13 @@ class App extends Component {
          )
         }}
         />
+        <Route path="/login" render={(props) => {
+         return(
+          <Login {...props}
+            isLoggedIn={this.state.isLoggedIn}
+          />
+         )
+        }} />
       </div>
     );
   }

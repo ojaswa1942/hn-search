@@ -1,0 +1,42 @@
+    .accountDrop{
+        list-style: none;
+        /*width: 80px;*/
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        z-index: 10;
+        padding-left: 20px;
+        padding-right: 10px;
+    }
+    .accountDrop img{
+        width: 40px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+   
+    .accountDrop li:hover{
+        /*color: #fff;*/
+        background: #6f350a;
+    }
+    .accountDrop ul.dropdown{
+        min-width: 100%; /* Set width of the dropdown */
+        background: #f2f2f2;
+        display: none;
+        position: absolute;
+        z-index: 15;
+        right: 0px;
+    }
+    .accountDrop:hover ul.dropdown{
+        display: block; /* Display the dropdown */
+    }
+    .accountDrop ul.dropdown li{
+        display: block;
+    }
+    .dropdown li{
+        padding: 8px;
+        background: #FF742B;
+        color: white;
+    }
+    .dropdown a{
+        color: white;
+    }

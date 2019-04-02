@@ -5,6 +5,7 @@ import hnLogo from '../../assets/logo-hn-search.png'
 import {Link} from 'react-router-dom'
 import Searchbar from '../Searchbar/Searchbar'
 import Filter from '../Filter/Filter'
+import AccountPane from '../AccountPane/AccountPane'
 
 class Navbar extends Component {
 	constructor(props) {
@@ -29,6 +30,7 @@ class Navbar extends Component {
 					</div>
 					
 					<Searchbar updateSearchQuery={this.props.updateSearchQuery} searchQuery={this.props.searchSettings.query} searchSettings={this.props.searchSettings} />
+					<AccountPane {...this.props} />
 					<Filter {...this.props} />
 				</header>
 		      </div>
