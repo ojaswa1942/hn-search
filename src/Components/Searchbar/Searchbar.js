@@ -10,7 +10,23 @@ class Searchbar extends Component {
 	}
 
 	updateQuery = (event) =>{
+		let {searchSettings} = this.props;
+  		window.history.pushState(null, null, `/query=${event.target.value}/sort=${searchSettings.sort}/page=${searchSettings.page}/dateRange=${searchSettings.dateRange}/type=${searchSettings.type}`);
 		this.props.updateSearchQuery(event.target.value);
+	}
+
+	componentDidMount(){
+	    let location = window.location.pathname;
+	    if(location !== '/'){
+			let quer = '', i=7;
+		    while(location[i]!=='/'){
+		      quer+=location[i];
+		      i++;
+		    }
+		    this.props.updateSearchQuery(quer);
+			const field = document.getElementsByClassName('searchBar-main')[0];
+			field.value = quer;
+	    }
 	}
 
 	render() {

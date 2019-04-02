@@ -10,15 +10,17 @@ const initialState = {
   },
   searchSettings: {
     type: 'story',
-    dateRange: null,
-    sort: 'search',
-    query: ''
+    dateRange: 'all',
+    sort: 'byPopularity',
+    query: '',
+    page: 0
   },
   isLoggedIn: false,
   searchRes: {
     results: [],
     number: 0,
-    timeTaken: 0
+    timeTaken: 0,
+    totalPage: 0
   }
 }
 
@@ -30,6 +32,29 @@ class App extends Component {
   componentDidMount(){
 
   }
+  componentDidUpdate(prevProps, prevState){
+    if(
+      prevState.searchSettings.type !== this.state.searchSettings.type ||
+      prevState.searchSettings.query !== this.state.searchSettings.query ||
+      prevState.searchSettings.page !== this.state.searchSettings.page ||
+      prevState.searchSettings.dateRange !== this.state.searchSettings.dateRange ||
+      prevState.searchSettings.sort !== this.state.searchSettings.sort
+    ){
+      console.log('Check');
+      let {searchSettings} = this.state;
+    }
+
+    return true;
+  }
+  updateSearchSettings = (sort, type, dateRange, page) => {
+    this.setState({
+      searchSettings: {
+        ...this.state.searchSettings,
+        sort, type, dateRange, page
+      }
+    })
+  }
+
   updateSearchQuery = (value) =>{
     this.setState({
       searchSettings: {
@@ -69,12 +94,13 @@ class App extends Component {
       }
     });
   }
-  updateSearchStats = (number, time) =>{
+  updateSearchStats = (number, time,page) =>{
     this.setState({
       searchRes: {
         ...this.state.searchRes, 
         number: number,
-        timeTaken: time
+        timeTaken: time,
+        totalPage: page
       }
     })
   }
@@ -97,6 +123,9 @@ class App extends Component {
   }
 
   render() {
+    let searchSettings = this.state.searchSettings;
+    if(window.location.pathname==='/')
+      window.location.href=(`/query=${searchSettings.query}/sort=${searchSettings.sort}/page=${searchSettings.page}/dateRange=${searchSettings.dateRange}/type=${searchSettings.type}`);
     return (
       <div className="App">
         <Navbar
@@ -104,11 +133,16 @@ class App extends Component {
           updateSearchType={this.updateSearchType}
           updateSearchDateRange={this.updateSearchDateRange}
           updateSearchQuery={this.updateSearchQuery}
+          searchSettings={this.state.searchSettings}
           searchStats={this.state.searchRes}
         />
-        <Route path={['/',"/hello"]} render={(props) => {
-          return(
-            <Results {...props} />
+        <Route path="/query=:query?/sort=:sort/page=:page/dateRange=:dateRange/type=:type" render={(props) => {
+           return(
+            <Results {...props}
+              searchSettings={this.state.searchSettings}
+              updateSearchStats={this.updateSearchStats}
+              updateSearchSettings={this.updateSearchSettings}
+            />
             )
           }}
         />

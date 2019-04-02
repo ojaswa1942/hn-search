@@ -16,19 +16,19 @@ class Navbar extends Component {
 		      <div className="navbar-parent">
 		        <header className="nav-header">
 					<div className="logo-wrapper">
-						<Link className="logo" to="/?">
+						<a className="logo" href="/">
 							<img alt='logo' className="logoNav" src={hnLogo} />
-						</Link>
-						<Link className="logo" to="/?">
+						</a>
+						<a className="logo" href="/">
 							<div className="logo-name">
 								Search
 								<br />
 								Hacker News
 							</div>
-						</Link>
+						</a>
 					</div>
 					
-					<Searchbar updateSearchQuery={this.props.updateSearchQuery} />
+					<Searchbar updateSearchQuery={this.props.updateSearchQuery} searchQuery={this.props.searchSettings.query} searchSettings={this.props.searchSettings} />
 					<Filter {...this.props} />
 				</header>
 		      </div>
