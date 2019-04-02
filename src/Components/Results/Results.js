@@ -3,6 +3,7 @@ import './Results.css';
 import {Link} from 'react-router-dom'
 import {ResultCard} from './ResultCard'
 import {Loader} from '../_Loader/Loader';
+import Pagination from '../Pagination/Pagination'
 
 class Results extends Component {
 	constructor(props) {
@@ -13,14 +14,15 @@ class Results extends Component {
 		}
 	}
 	componentDidMount(){
-		let {sort, dateRange, type, page} = this.props.match.params;
+		let {sort, dateRange, type, page, query} = this.props.match.params;
 		document.getElementById('typef').value=type;
 		document.getElementById('sortf').value=sort;
 		document.getElementById('datef').value=dateRange;
-		this.props.updateSearchSettings(sort, type, dateRange, page);
-		// console.log(sort, dateRange, type);
-		// this.modifyAndUpdate();
-
+		if(query == undefined || query == null)
+			query='';
+		else
+			document.getElementById('queryf').value=query;
+		this.props.updateSearchSettings(sort, type, dateRange, page, query);
 	}
 	componentDidUpdate(prevProps, prevState){
 		if(
@@ -37,8 +39,6 @@ class Results extends Component {
 	modifyAndUpdate = () => {
 		let sort, dateRange, type;
 		const {searchSettings} = this.props;
-		console.log(searchSettings);
-		
 		switch(searchSettings.sort){
 			case 'byPopularity': sort = 'search'; break;
 			case 'byDate': sort = 'search_by_date'; break;
@@ -67,10 +67,10 @@ class Results extends Component {
 		else {
 			url = `https://hn.algolia.com/api/v1/${sort}?query=${this.props.searchSettings.query}&page=${page}&tags=${type}&numericFilters=created_at_i>${dateRange}`;
 		}
-		console.log(url);
 		fetch(url)
 		.then(res => res.json())
 		.then(data => {
+			console.log(data);
 			this.setState({results: data.hits});
 			this.props.updateSearchStats(data.nbHits, data.processingTimeMS/1000, data.nbPages);
 			this.setState({isLoading: false});
@@ -110,6 +110,8 @@ class Results extends Component {
 				comment={res.comment_text}
 				commentTitle={res.story_title}
 				commentNum={res.num_comments}
+				storyText={res.story_text}
+				type={this.props.searchSettings.type}
 		 		/> 
 			});
 			return repComponent;
@@ -117,9 +119,9 @@ class Results extends Component {
 	    return (
 	    	<div className='search-results-main'>
 	    		{(this.state.results.length)?
-		    		<div className='search-results'>
+		    		<div className='search-results pb3'>
 			    		<ResultList results={this.state.results} />
-		    			
+			            <Pagination {...this.props} />
 	    			</div>
 	    			:
 	    			(this.state.isLoading)?

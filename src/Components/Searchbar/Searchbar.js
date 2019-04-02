@@ -16,17 +16,6 @@ class Searchbar extends Component {
 	}
 
 	componentDidMount(){
-	    let location = window.location.pathname;
-	    if(location !== '/'){
-			let quer = '', i=7;
-		    while(location[i]!=='/'){
-		      quer+=location[i];
-		      i++;
-		    }
-		    this.props.updateSearchQuery(quer);
-			const field = document.getElementsByClassName('searchBar-main')[0];
-			field.value = quer;
-	    }
 	}
 
 	render() {
@@ -34,7 +23,7 @@ class Searchbar extends Component {
 			<div className="search-wrapper">
 				<div className="searchbar-input-wrapper">
 					<img src={searchIcon} alt='' className="search-icon"></img>
-					<input type="search" 
+					<input id='queryf' type="search" 
 						placeholder="Search stories by title, url or author" 
 						autoComplete="new-password" 
 						autoCapitalize="off" 

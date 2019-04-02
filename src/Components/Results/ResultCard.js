@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const ResultCard = ({title, id, points, author, comments, url, date, comment,commentTitle,commentNum}) => {
+export const ResultCard = ({title, id, points, author, comments, url, date, comment,commentTitle,commentNum, storyText, type}) => {
 	let hrefPoint = `https://news.ycombinator.com/item?id=${id}`;
 	let hrefUser = `https://news.ycombinator.com/user?id=${author}`;
 	let profileTitle= `See ${author} profile`;
@@ -61,6 +61,12 @@ export const ResultCard = ({title, id, points, author, comments, url, date, comm
 								</li>
 							</ul>
 						</div>
+						<br />
+						{(type==='all')?
+							<div className='comment ma2' dangerouslySetInnerHTML={{__html: storyText}} />
+							:
+							null
+						}
 					</div>
 				</div>
 			</div>

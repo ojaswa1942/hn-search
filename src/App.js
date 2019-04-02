@@ -3,6 +3,7 @@ import './App.css';
 import Navbar from './Components/Navbar/Navbar'
 import Results from './Components/Results/Results'
 import {Route, Switch} from 'react-router-dom';
+import Pagination from './Components/Pagination/Pagination'
 
 const initialState = {
   user: {
@@ -32,25 +33,10 @@ class App extends Component {
   componentDidMount(){
 
   }
-  componentDidUpdate(prevProps, prevState){
-    if(
-      prevState.searchSettings.type !== this.state.searchSettings.type ||
-      prevState.searchSettings.query !== this.state.searchSettings.query ||
-      prevState.searchSettings.page !== this.state.searchSettings.page ||
-      prevState.searchSettings.dateRange !== this.state.searchSettings.dateRange ||
-      prevState.searchSettings.sort !== this.state.searchSettings.sort
-    ){
-      console.log('Check');
-      let {searchSettings} = this.state;
-    }
-
-    return true;
-  }
-  updateSearchSettings = (sort, type, dateRange, page) => {
+  updateSearchSettings = (sort, type, dateRange, page, query) => {
     this.setState({
       searchSettings: {
-        ...this.state.searchSettings,
-        sort, type, dateRange, page
+        sort, type, dateRange, page, query
       }
     })
   }
@@ -60,6 +46,14 @@ class App extends Component {
       searchSettings: {
         ...this.state.searchSettings, 
         query: value
+      }
+    });
+  }
+  updateSearchPage = (value) =>{
+    this.setState({
+      searchSettings: {
+        ...this.state.searchSettings, 
+        page: value
       }
     });
   }
@@ -137,14 +131,17 @@ class App extends Component {
           searchStats={this.state.searchRes}
         />
         <Route path="/query=:query?/sort=:sort/page=:page/dateRange=:dateRange/type=:type" render={(props) => {
-           return(
-            <Results {...props}
-              searchSettings={this.state.searchSettings}
-              updateSearchStats={this.updateSearchStats}
-              updateSearchSettings={this.updateSearchSettings}
-            />
-            )
-          }}
+         return(
+          <Results {...props}
+            searchSettings={this.state.searchSettings}
+            updateSearchStats={this.updateSearchStats}
+            updateSearchSettings={this.updateSearchSettings}
+            initialPage={this.state.searchSettings.page}
+            totalPages={this.state.searchRes.totalPage}
+            updateSearchPage={this.updateSearchPage}
+          />
+         )
+        }}
         />
       </div>
     );
