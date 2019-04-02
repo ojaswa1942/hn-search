@@ -13,9 +13,16 @@ class Login extends Component {
     	verification: 1,
     	errorRes: "",
     	loading: true,
-    	redirect: false
+    	redirect: false,
+    	loading2: false
     }
   }
+	onPassChange = (event) => {
+		this.setState({password:event.target.value});
+	}
+	onEmailChange = (event) => {
+		this.setState({username:event.target.value});
+	}
   componentWillMount(){
   	if(!this.props.isLoggedIn){
 		fetch('/api/checkToken')
@@ -36,13 +43,21 @@ class Login extends Component {
   componentDidMount(){
   	// if(!this.props.isLoggedIn && !this.state.loading)
   	// 	registerFunctions(this);
+  	document.getElementsByClassName('filter-parent')[0].style.display='none';
+  	document.getElementsByClassName('search-wrapper')[0].style.display='none';
   }
   componentDidUpdate(prevProps, prevState){
   	// if(!this.state.loading && !this.props.isLoggedIn)
   	// 	registerFunctions(this);
   }
+  componentWillUnmount(){
+  	document.getElementsByClassName('filter-parent')[0].style.display='block';
+  	document.getElementsByClassName('search-wrapper')[0].style.display='block';
+ 
+  }
 
   requestLogin = () =>{
+	this.setState({loading2: true});
   	let error=false;
 	fetch('/api/signin', {
 		method: 'post',
@@ -61,8 +76,7 @@ class Login extends Component {
 			throw(user);
 		this.updateAllData(user);
 		this.setState({
-			gotUserData: true, 
-			verification: user.user.confirm
+			loading2: false
 		})
 	})
 	.catch(err => this.setState({errorRes: err}));
@@ -96,7 +110,7 @@ class Login extends Component {
 	  		(loading)?
 	  			<Loader />
   			:
-		  		(this.state.gotUserData && !this.state.verification)?
+		  		(false)?
 					<div className='f3 white'>
 						Please verify your email to continue.
 					</div>
@@ -113,16 +127,17 @@ class Login extends Component {
 							      <legend className="f4 fw6 ph0 mh0">Sign In</legend>
 							      <div className="mt3">
 							        <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-							        <input className="pa2 input-reset ba bg-transparent hover-black w-100" type="email" name="email-address"  id="email-address" />
+							        <input onClick={this.onEmailChange} className="pa2 input-reset ba bg-transparent hover-black w-100" type="email" name="email-address"  id="email-address" />
 							      </div>
 							      <div className="mv3">
 							        <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-							        <input className="b pa2 input-reset ba bg-transparent hover-black w-100" type="password" name="password"  id="password" />
+							        <input onClick={this.onPassChange} className="b pa2 input-reset ba bg-transparent hover-black w-100" type="password" name="password"  id="password" />
 							      </div>
 							    </fieldset>
 							    <div className="">
-							      <div className="ph3 pv2 white input-reset ba bg-orange grow pointer f6 dib" type="submit" value="Sign in" >Sign in</div>
+							      <div onClick={this.setState({gotUserData: true})} className="ph3 pv2 white input-reset ba bg-orange grow pointer f6 dib" type="submit" value="Sign in" >Sign in</div>
 							    </div>
+							    {(this.state.loading2)? <Loader /> : null}
 							  </form>
 							</main>
 

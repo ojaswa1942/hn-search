@@ -1,46 +1,24 @@
 import React, { Component } from 'react';
 import {Link, Redirect} from 'react-router-dom';
-import {Footer} from '../Footer/Footer';
-import '../../assets/css/solid.min.css'
-import '../../assets/css/fontawesome.min.css'
-import '../../assets/css/signup.css'
-import headers from "../../assets/logo/headers.png"
-import {registerFunctions} from './RegisterFunctions'
 import {Loader} from '../_Loader/Loader'
 
 class Register extends Component {
 
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state={
-	  	questions: [
-		  {question:"What's your name?", pattern: /^[\w\s.,-]{3,60}$/},
-		  {question:"Gender", type: "sellect", pattern: /^(male|female|other)$/},
-		  {question:"College Name?", pattern: /^[\w\s.,()&+-]{4,80}$/},
-		  {question:"City?", pattern: /^[\w\s.,-]{3,38}$/},
-		  {question:"What's your email?",type: "emaill", pattern: /^(?=[A-Za-z0-9][A-Za-z0-9@._%+-]{5,253}$)[A-Za-z0-9._%+-]{1,64}@(?:(?=[A-Za-z0-9-]{1,63}\.)[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*\.){1,8}[A-Za-z]{2,5}$/},
-		  {question:"What's your phone number?", type:'tel', pattern: /^[6-9]\d{9}$/},
-		  {question:"Create your password", type: "password", pattern: /^.{3,36}$/},
-	    ],
-	    gotData: false,
-	    responseMessage: '',
-	    receivedError: false,
+    	username: '',
+    	password: '',
+    	email: '',
+    	gotUserData: false,
+    	verification: 1,
+    	errorRes: "",
     	loading: true,
     	redirect: false
     }
-    this.userData= {
-    		name: '',
-    		gender: '',
-    		college: '',
-    		city: '',
-    		email: '',
-    		phone: '',
-    		password: ''
-    	}
   }
-
   componentWillMount(){
-  	if(!this.props.isLoggedIn){
+   	if(!this.props.isLoggedIn){
 		fetch('/api/checkToken')
 		.then(response => {
 			if(response.status!==200)
@@ -50,108 +28,119 @@ class Register extends Component {
 		})
 		.catch(() => {
 			this.setState({ loading: false });
-  			registerFunctions(this);
 		});
 	} else this.setState({loading: false, redirect: true});
   }
 
   componentDidMount(){
+  	// if(!this.props.isLoggedIn && !this.state.loading)
+  	// 	registerFunctions(this);
+  	document.getElementsByClassName('filter-parent')[0].style.display='none';
+  	document.getElementsByClassName('search-wrapper')[0].style.display='none';
+
+  }
+  componentWillUnmount(){
+  	document.getElementsByClassName('filter-parent')[0].style.display='block';
+  	document.getElementsByClassName('search-wrapper')[0].style.display='block';
+ 
+  }
+  componentDidUpdate(prevProps, prevState){
+  	// if(!this.state.loading && !this.props.isLoggedIn)
+  	// 	registerFunctions(this);
   }
 
-  requestRegistration = (userData) =>{
-  	let err = false;
-	fetch('/api/register', {
+  requestLogin = () =>{
+  	let error=false;
+	fetch('/api/signin', {
 		method: 'post',
 		headers: {'Content-type': 'application/json'},
-		body: JSON.stringify({userData})
+		body: JSON.stringify({
+			username: this.state.username,
+			password: this.state.password
+		})
 	})
 	.then(response => {
-		if(response.status !== 200)
-			err = true;
-		return response.json()
-	})
+		if(response.status!==200)
+			error=true;
+		return response.json()})
 	.then((user) => {
-		if(err)
+		if(error)
 			throw(user);
-		this.setState({responseMessage: user});
+		this.updateAllData(user);
+		this.setState({
+			gotUserData: true, 
+			verification: user.user.confirm
+		})
 	})
-	.catch(err => {this.setState({receivedError: true, responseMessage: err})});
+	.catch(err => this.setState({errorRes: err}));
   }
 
-  updateUserData = () =>{
-  	this.userData = {
-		name: this.state.questions[0].value,
-		gender: this.state.questions[1].value,
-		college: this.state.questions[2].value,
-		city: this.state.questions[3].value,
-		email: this.state.questions[4].value,
-		phone: this.state.questions[5].value,
-		password: this.state.questions[6].value
-  	};
-  	if(this.state.gotData && !this.state.responseMessage){
-  		this.requestRegistration(this.userData);
-  	}
+  updateAllData = (user) => {
+	this.props.updateLoginState(true);
+	this.props.updateUser(user.user);
   }
 
   render() {
-  	
   	const { loading } = this.state;
   	if(this.state.redirect){
-  		return <Redirect to='/profile' />
+  		return <Redirect to='/dash' />
   	}
-  	if(this.state.questions[0].value && !this.state.responseMessage)
-  		this.updateUserData();
 
-  	if(this.state.receivedError){
-  		setTimeout(()=>{
-  			window.location.reload();
-  		}, 1200);
+  	if(this.state.username && this.state.password && !this.state.gotUserData){
+  		this.requestLogin();
+  	}
+
+  	if(this.state.gotUserData && this.state.verification){
+  		return <Redirect to='/login' />
   	}
 
     return (
-	   	<div className='register-container'>
-	   	  <div>
-			<Link to='/'><img src={headers} className="headim" alt="infotsav logo" /></Link>
-		  </div>
+  		
+	   	<div className='register-container pt6'>
    		  <div id="progress"></div>
 		  <div className="center">
-		    <div id="headdin">
-		  		<h1>Register</h1>
-		  	</div>
 		  	{
 	  		(loading)?
 	  			<Loader />
   			:
-			  	(this.state.responseMessage)?
-			  		(this.state.receivedError)?
+		  		(this.state.gotUserData && !this.state.verification)?
+					<div className='f3 white'>
+						Please verify your email to continue.
+					</div>
+				:
+					(this.state.errorRes)?
 						<div className='f3 white'>
-							{this.state.responseMessage}
+							{this.state.errorRes}
 						</div>
 					:
-						<div className='f3 white'>
-							{this.state.responseMessage} <br /><br />
-							Verify your email to continue <br /><br />
-							Didn't get the verification email? Please check your spam folder.
-						</div>
-				:
-				    <div id="register">
-				      <i id="progressButton" className="fas fa-arrow-right next"></i>
-				      <div id="inputContainer">
-				        <input id="inputField" required autoFocus />
-				        <label id="inputLabel"></label>
-				        <select id="selectBox" className='doNotDisplay'>
-				          <option value="male">Male</option>
-				          <option value="female">Female</option>
-				          <option value="other">Other</option>
-				        </select>
-				        <div id="inputProgress"></div>
-				      </div>
-				    </div>
+					    <div id="register">
+					    	<main className="pa4 black-80">
+							  <form className="measure center">
+							    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
+							      <legend className="f4 fw6 ph0 mh0">Sign Up</legend>
+							      <div className="mt3">
+							        <label className="db fw6 lh-copy f6" htmlFor="name">Name</label>
+							        <input className="pa2 input-reset ba bg-transparent hover-black w-100" type="text" name="name"  id="" />
+							      </div>						      
+							      <div className="mt3">
+							        <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
+							        <input className="pa2 input-reset ba bg-transparent hover-black w-100" type="email" name="email-address"  id="email-address" />
+							      </div>
+
+							      <div className="mv3">
+							        <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
+							        <input className="b pa2 input-reset ba bg-transparent hover-black w-100" type="password" name="password"  id="password" />
+							      </div>
+							    </fieldset>
+							    <div className="">
+							      <div className="ph3 pv2 white input-reset ba bg-orange grow pointer f6 dib" type="submit" value="Sign up" >Sign up</div>
+							    </div>
+							  </form>
+							</main>
+
+					    </div>
 			}
-		    <div id="sendto">Already have an account? <Link to="/login">LOGIN</Link></div>
-		    <div id="holdit"></div>
-	  	  </div>
-  		  <Footer />
+  		   </div>
 		</div>
     );
   }

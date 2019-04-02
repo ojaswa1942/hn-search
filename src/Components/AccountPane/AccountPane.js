@@ -27,8 +27,16 @@ class AccountPane extends Component {
 	            <img src={accountPic} className='accountPic' />
 	            <ul className="dropdown">
 	                <a href={`/query=${searchSettings.query}/sort=${searchSettings.sort}/page=${searchSettings.page}/dateRange=${searchSettings.dateRange}/type=${searchSettings.type}`}><li className='pointer'>Search</li></a>
-	                <Link to='/register'><li className='pointer'>Register</li></Link>
-	                <Link to='/login'><li className='pointer'>Login</li></Link>
+	                {(!this.props.isLoggedIn)?
+	                	<Link to='/register'><li className='pointer'>Register</li></Link>
+	                	:
+	                	<Link to='/dash'><li className='pointer'>Dashboard</li></Link>
+	                }
+	                {(!this.props.isLoggedIn)?
+	                	<Link to='/login'><li className='pointer'>Login</li></Link>
+	                	:
+	                	<a href='#' ><li className='pointer'>Logout</li></a>
+	                }
 	            </ul>
 	 		</div>
 	    );

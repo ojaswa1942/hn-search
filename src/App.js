@@ -3,12 +3,14 @@ import './App.css';
 import Navbar from './Components/Navbar/Navbar'
 import Results from './Components/Results/Results'
 import Login from './Components/Login/Login'
+import Register from './Components/Register/Register'
 import {Route, Switch} from 'react-router-dom';
 import Pagination from './Components/Pagination/Pagination'
 
 const initialState = {
   user: {
-    name: ''
+    name: '',
+    email: ''
   },
   searchSettings: {
     type: 'story',
@@ -85,7 +87,8 @@ class App extends Component {
   }
   updateUserInfo = (value) =>{
     this.setState({user: {
-        name: value.name
+        name: value.name,
+        email: value.email
       }
     });
   }
@@ -131,6 +134,7 @@ class App extends Component {
           searchSettings={this.state.searchSettings}
           searchStats={this.state.searchRes}
           isLoggedIn={this.state.isLoggedIn}
+          updateLoginState={this.updateLoginState}
         />
         <Route path="/query=:query?/sort=:sort/page=:page/dateRange=:dateRange/type=:type" render={(props) => {
          return(
@@ -148,6 +152,14 @@ class App extends Component {
         <Route path="/login" render={(props) => {
          return(
           <Login {...props}
+            isLoggedIn={this.state.isLoggedIn}
+            updateUserInfo={this.updateUserInfo}
+          />
+         )
+        }} />
+        <Route path="/register" render={(props) => {
+         return(
+          <Register {...props}
             isLoggedIn={this.state.isLoggedIn}
           />
          )
