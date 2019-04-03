@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
 import './Filter.css';
-import {Link} from 'react-router-dom'
 
 class Filter extends Component {
 	constructor(props) {

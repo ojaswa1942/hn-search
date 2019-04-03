@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import './Navbar.css';
 import hnLogo from '../../assets/logo-hn-search.png'
-import {Link} from 'react-router-dom'
 import Searchbar from '../Searchbar/Searchbar'
 import Filter from '../Filter/Filter'
 import AccountPane from '../AccountPane/AccountPane'

@@ -6,7 +6,6 @@ import Login from './Components/Login/Login'
 import Dash from './Components/Dash/Dash'
 import Register from './Components/Register/Register'
 import {Route, Switch} from 'react-router-dom';
-import Pagination from './Components/Pagination/Pagination'
 
 const initialState = {
   user: {

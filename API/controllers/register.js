@@ -34,7 +34,7 @@ const handleRegister = (req,res,db,bcrypt,xss)=>{
 					db.query(reg_query)
 						.then(result => {
 							let userData = {
-								user: name,
+								name: name,
 								email: email
 							};
 							const payload = {email};

@@ -25,7 +25,7 @@ const handleSignin = (req,res,db,bcrypt,xss)=>{
 				bcrypt.compare(password, data.rows[0].password, function(err, result) {
 					if(result) {
 						let userData = {
-							user: data.rows[0].name,
+							name: data.rows[0].name,
 							email: email
 						};
 						const payload = {email};

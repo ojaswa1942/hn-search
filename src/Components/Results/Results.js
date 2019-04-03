@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Results.css';
-import {Link} from 'react-router-dom'
 import {ResultCard} from './ResultCard'
 import {Loader} from '../_Loader/Loader';
 import Pagination from '../Pagination/Pagination'
@@ -18,7 +17,7 @@ class Results extends Component {
 		document.getElementById('typef').value=type;
 		document.getElementById('sortf').value=sort;
 		document.getElementById('datef').value=dateRange;
-		if(query == undefined || query == null)
+		if(query === undefined || query === null)
 			query='';
 		else
 			document.getElementById('queryf').value=query;
@@ -42,6 +41,7 @@ class Results extends Component {
 		switch(searchSettings.sort){
 			case 'byPopularity': sort = 'search'; break;
 			case 'byDate': sort = 'search_by_date'; break;
+			default: sort ='search';
 		}
 		switch(searchSettings.dateRange){
 			case 'all': dateRange = null; break;
@@ -49,11 +49,13 @@ class Results extends Component {
 			case 'pastWeek': dateRange = this.getLastWeek(); break;
 			case 'pastMonth': dateRange = this.getLastMonth(); break;
 			case 'pastYear': dateRange = this.getLastYear(); break;
+			default: dateRange= null;
 		}
 		switch(searchSettings.type){
 			case 'story': type = 'story'; break;
 			case 'comment': type = 'comment'; break;
 			case 'all': type = '(story,comment)'; break;
+			default: type='story';
 		}
 		this.triggerSearchQuery(type, dateRange, sort, searchSettings.page);
 	}
@@ -70,7 +72,6 @@ class Results extends Component {
 		fetch(url)
 		.then(res => res.json())
 		.then(data => {
-			console.log(data);
 			this.setState({results: data.hits});
 			this.props.updateSearchStats(data.nbHits, data.processingTimeMS/1000, data.nbPages);
 			this.setState({isLoading: false});

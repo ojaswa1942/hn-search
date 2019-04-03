@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
 import './Searchbar.css';
-import {Link} from 'react-router-dom'
 import searchIcon from '../../assets/search-3-xxl.png'
 
 class Searchbar extends Component {

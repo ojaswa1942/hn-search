@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Link, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import {Loader} from '../_Loader/Loader'
 
 class Login extends Component {
@@ -117,7 +117,6 @@ class Login extends Component {
   	if(this.state.gotUserData && this.state.verification){
   		// return <Redirect to='/dash' />
   	}
-  	const error = this.state.errorRes;
     return (
   		
 	   	<div className='register-container pt6'>

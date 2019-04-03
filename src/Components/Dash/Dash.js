@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Link, Redirect} from 'react-router-dom';
+import { Redirect} from 'react-router-dom';
 import {Loader} from '../_Loader/Loader'
 import ReportCard from './ReportCard';
 
@@ -50,35 +50,34 @@ class Dash extends Component {
 
   requestQueries = () =>{
   	if(!this.state.loading2){
-		this.setState({loading2: true});
-	  	let error=false;
-		fetch('/api/queryGet', {
-			method: 'post',
-			headers: {'Content-type': 'application/json'},
-			body: JSON.stringify({
-				email: this.props.userInfo.email
-			})
-		})
-		.then(response => {
-			if(response.status!==200)
-				error=true;
-			return response.json()})
-		.then((user) => {
-			if(error)
-				throw(user);
-			this.setState({
-				loading2: false,
-				redirect: false,
-				gotUserData: true,
-				history: user
-			})
-		})
-		.catch(err => this.setState({errorRes: err, loading2: false}));
-	}
+  		this.setState({loading2: true});
+  	  	let error=false;
+  		fetch('/api/queryGet', {
+  			method: 'post',
+  			headers: {'Content-type': 'application/json'},
+  			body: JSON.stringify({
+  				email: this.props.userInfo.email
+  			})
+  		})
+  		.then(response => {
+  			if(response.status!==200)
+  				error=true;
+  			return response.json()})
+  		.then((user) => {
+  			if(error)
+  				throw(user);
+  			this.setState({
+  				loading2: false,
+  				redirect: false,
+  				gotUserData: true,
+  				history: user
+  			})
+  		})
+  		.catch(err => this.setState({errorRes: err, loading2: false}));
+  	}
   }
 
   render() {
-  	console.log(this.state, this.state.history);
   	const { loading } = this.state;
   	if(this.state.redirect){
   		return <Redirect to='/login' />
@@ -87,7 +86,6 @@ class Dash extends Component {
   	if(this.props.userInfo.name && !this.state.gotUserData){
   		this.requestQueries();
   	}
-  	const error = this.state.errorRes;
   	let searchSettings = {
 	    type: 'story',
 	    dateRange: 'all',

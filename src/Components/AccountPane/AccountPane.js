@@ -24,7 +24,7 @@ class AccountPane extends Component {
 	  	}
 	    return (
 	 		<div className='accountDrop'>
-	            <img src={accountPic} className='accountPic' />
+	            <img alt='account' src={accountPic} className='accountPic' />
 	            <ul className="dropdown">
 	                <a href={`/query=${searchSettings.query}/sort=${searchSettings.sort}/page=${searchSettings.page}/dateRange=${searchSettings.dateRange}/type=${searchSettings.type}`}><li className='pointer'>Search</li></a>
 	                {(!this.props.isLoggedIn)?
@@ -34,7 +34,7 @@ class AccountPane extends Component {
 	                }
 	                {(!this.props.isLoggedIn)?
 	                	<Link to='/login'><li className='pointer'>Login</li></Link>
-	                	:
+	                	: //eslint-disable-next-line
 	                	<a onClick={this.props.logout} ><li className='pointer'>Logout</li></a>
 	                }
 	            </ul>
