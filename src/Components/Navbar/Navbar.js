@@ -29,7 +29,7 @@ class Navbar extends Component {
 						</a>
 					</div>
 					
-					<Searchbar updateSearchQuery={this.props.updateSearchQuery} searchQuery={this.props.searchSettings.query} searchSettings={this.props.searchSettings} />
+					<Searchbar userInfo={this.props.userInfo} isLoggedIn={this.props.isLoggedIn} updateSearchQuery={this.props.updateSearchQuery} searchQuery={this.props.searchSettings.query} searchSettings={this.props.searchSettings} />
 					<AccountPane {...this.props} />
 					<Filter {...this.props} />
 				</header>

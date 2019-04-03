@@ -14,6 +14,31 @@ class Searchbar extends Component {
   		window.history.pushState(null, null, `/query=${event.target.value}/sort=${searchSettings.sort}/page=${searchSettings.page}/dateRange=${searchSettings.dateRange}/type=${searchSettings.type}`);
 		this.props.updateSearchQuery(event.target.value);
 	}
+	_handleKeyPress = (event) => {
+		console.log('Chh');
+	    if(event.key === 'Enter' && this.props.searchSettings.query.length && this.props.isLoggedIn){
+		console.log('Chh2', this.props.userInfo.email);
+	    	let error=false;
+			fetch('/api/query', {
+				method: 'post',
+				headers: {'Content-type': 'application/json'},
+				body: JSON.stringify({
+					email: this.props.userInfo.email,
+					query: this.props.searchSettings.query
+				})
+			})
+			.then(response => {
+				if(response.status!==200)
+					error=true;
+				return response.json()})
+			.then((user) => {
+				if(error)
+					throw(user);
+				console.log(user);
+			})
+			.catch(err => console.log(err))
+	    }
+  	}
 
 	componentDidMount(){
 	}
@@ -32,6 +57,7 @@ class Searchbar extends Component {
 						autoFocus 
 						className="searchBar-main" 
 						onChange={this.updateQuery}
+						onKeyPress={this._handleKeyPress}
 					/>
 				</div>
 				<span className="powered-by">

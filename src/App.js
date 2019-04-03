@@ -3,6 +3,7 @@ import './App.css';
 import Navbar from './Components/Navbar/Navbar'
 import Results from './Components/Results/Results'
 import Login from './Components/Login/Login'
+import Dash from './Components/Dash/Dash'
 import Register from './Components/Register/Register'
 import {Route, Switch} from 'react-router-dom';
 import Pagination from './Components/Pagination/Pagination'
@@ -34,7 +35,24 @@ class App extends Component {
     this.state = initialState
   }
   componentDidMount(){
-
+    if(!this.state.isLoggedIn){
+        fetch('/api/profilex')
+        .then(response => {
+          if(response.status!==200)
+            throw(response);
+          return response.json();
+        })
+        .then((data) =>{
+          this.updateLoginState(true);
+          this.updateUserInfo(data);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.setState({loading: false});
+        });
+    } else {
+      this.setState({loading: false, redirect: true});
+    }
   }
   updateSearchSettings = (sort, type, dateRange, page, query) => {
     this.setState({
@@ -111,7 +129,7 @@ class App extends Component {
       .then(res=>{
         if(res.redirected){
           this.setState(initialState);
-          // window.location.reload();
+          window.location.reload();
           window.location.href='/';
         }
         throw(res.error)
@@ -135,6 +153,8 @@ class App extends Component {
           searchStats={this.state.searchRes}
           isLoggedIn={this.state.isLoggedIn}
           updateLoginState={this.updateLoginState}
+          logout={this.logOut}
+          userInfo={this.state.user}
         />
         <Route path="/query=:query?/sort=:sort/page=:page/dateRange=:dateRange/type=:type" render={(props) => {
          return(
@@ -154,13 +174,26 @@ class App extends Component {
           <Login {...props}
             isLoggedIn={this.state.isLoggedIn}
             updateUserInfo={this.updateUserInfo}
+            updateLoginState={this.updateLoginState}
           />
          )
         }} />
         <Route path="/register" render={(props) => {
          return(
           <Register {...props}
+            updateUserInfo={this.updateUserInfo}
             isLoggedIn={this.state.isLoggedIn}
+            updateLoginState={this.updateLoginState}
+          />
+         )
+        }} />
+        <Route path="/dash" render={(props) => {
+         return(
+          <Dash {...props}
+            updateUserInfo={this.updateUserInfo}
+            isLoggedIn={this.state.isLoggedIn}
+            updateLoginState={this.updateLoginState}
+            userInfo={this.state.user}
           />
          )
         }} />

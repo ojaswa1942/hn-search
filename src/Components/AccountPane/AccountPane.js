@@ -35,7 +35,7 @@ class AccountPane extends Component {
 	                {(!this.props.isLoggedIn)?
 	                	<Link to='/login'><li className='pointer'>Login</li></Link>
 	                	:
-	                	<a href='#' ><li className='pointer'>Logout</li></a>
+	                	<a onClick={this.props.logout} ><li className='pointer'>Logout</li></a>
 	                }
 	            </ul>
 	 		</div>

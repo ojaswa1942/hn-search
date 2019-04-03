@@ -1,11 +1,11 @@
 
 const handleQueryUpdate = (req,res,db)=>{
-	const {query2, email} = req.body;
-	const query = {
-	  text: 'INSERT INTO history(email, query, date) VALUES($1, $2)',
-	  values: [email, query2, new Date()]
+	const {query, email} = req.body;
+	const queryInsert = {
+	  text: 'INSERT INTO history(email, query, date) VALUES($1, $2, $3)',
+	  values: [email, query, new Date()]
 	}
-	db.query(query)
+	db.query(queryInsert)
 	.then(() =>{
 		return res.status(200).json('Updated');
 	})
@@ -14,12 +14,12 @@ const handleQueryUpdate = (req,res,db)=>{
 const handleQuerySelect = (req,res,db)=>{
 	const {email} = req.body;
 	const query = {
-	  text: 'SELECT * from history where email=$1 order by date desc',
-	  values: [email, query, new Date()]
+	  text: 'SELECT * from history where email=$1 order by date DESC',
+	  values: [email]
 	}
 	db.query(query)
-	.then(() =>{
-		return res.status(200).json('Updated');
+	.then((data) =>{
+		return res.status(200).json(data.rows);
 	})
 	.catch(err => res.status(400).json(err));
 }

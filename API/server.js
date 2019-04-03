@@ -6,32 +6,20 @@ const xss = require('xss');
 const cookieParser = require('cookie-parser');
 const signin = require('./controllers/signin');
 const profilex = require('./middleware/profilex');
-const withAdmin = require('./middleware/withAdmin');
 const withAuth = require('./middleware/withAuth');
-const timeCheck = require('./middleware/timeCheck');
 const query = require('./controllers/query');
-require("dotenv").config();
+const { Pool, Client } = require('pg')
+const register = require('./controllers/register');
+const servAcc = require('./service-accounts.json');
 
-// const db = knex({
-//   client: 'mysql',
-//   connection: {
-//     host : serviceAcc.host,
-//     user : serviceAcc.user,
-//     password : serviceAcc.password,
-//     database : serviceAcc.database
-//   }
-// });
-
-// const dbTrace = knex({
-//   client: 'mysql',
-//   connection: {
-//     host : serviceAcc.host,
-//     user : serviceAcc.user,
-//     password : serviceAcc.password,
-//     database : 'tracetrove'
-//   }
-// });
-let db, dbTrace;
+const db = new Client({
+	user: servAcc.user,
+	host: servAcc.host,
+	database: servAcc.database,
+	password: servAcc.password,
+	port: servAcc.port
+})
+db.connect()
 const app=express();
 
 app.use(cors());
@@ -40,15 +28,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.get('/api', (req,res)=>{ res.send('it is working')});
-app.post('/api/signin', (req,res)=> {signin.handleSignin(req, res, db, dbTrace, bcrypt, xss)});
-app.post('/api/chatbot', withAuth, (req,res)=>{chatbot.handleChatbotResponse(req, res, db, dbTrace, xss)});
-app.get('/api/score', (req,res)=>{score.handleHighScore(req, res, dbTrace)});
-app.post('/api/queryGet', (req,res)=>{lost.handleQuerySelect(req, res, db)});
-app.post('/api/query', (req,res)=>{lost.handleQueryUpdate(req, res, db)});
-app.get('/api/hint', withAuth, (req,res)=>{hint.handleHint(req, res, db, dbTrace)});
-app.get('/api/newGame', withAuth, (req,res)=>{newGame.handleNewGame(req, res, db, dbTrace)});
-app.get('/api/logout', (req, res) => {res.clearCookie('token'); res.status(301).redirect('/login');});
-app.get('/api/profilex', withAuth, (req, res) => {profilex.handleProfile(req, res, db, dbTrace)});
+app.post('/api/signin', (req,res)=> {signin.handleSignin(req, res, db, bcrypt, xss)});
+app.post('/api/queryGet', (req,res)=>{query.handleQuerySelect(req, res, db)});
+app.post('/api/query', (req,res)=>{query.handleQueryUpdate(req, res, db)});
+app.get('/api/logout', (req, res) => {res.clearCookie('token'); res.status(301).redirect('/');});
+app.post('/api/register', (req,res)=> {register.handleRegister(req, res, db, bcrypt, xss)});
+app.get('/api/profilex', withAuth, (req, res) => {profilex.handleProfile(req, res, db)});
 app.get('/api/checkToken', withAuth, (req, res) => {
   res.sendStatus(200);
 });

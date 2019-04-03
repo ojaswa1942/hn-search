@@ -12,6 +12,7 @@ class Login extends Component {
     	gotUserData: false,
     	verification: 1,
     	errorRes: "",
+    	error: true,
     	loading: true,
     	redirect: false,
     	loading2: false
@@ -23,6 +24,11 @@ class Login extends Component {
 	onEmailChange = (event) => {
 		this.setState({username:event.target.value});
 	}
+	_handleKeyPress = (event) => {
+	    if(event.key === 'Enter'){
+	      this.handleClick();
+	    }
+  	}
   componentWillMount(){
   	if(!this.props.isLoggedIn){
 		fetch('/api/checkToken')
@@ -32,8 +38,9 @@ class Login extends Component {
 		    this.setState({ loading: false, redirect: true });
 		    this.props.updateLoginState(true);
 		})
-		.catch(() => {
-			this.setState({ loading: false });
+		.catch((err) => {
+			console.log(err);
+			this.setState({loading: false});
 		});
 	} else {
 		this.setState({loading: false, redirect: true});
@@ -41,50 +48,64 @@ class Login extends Component {
   }
 
   componentDidMount(){
-  	// if(!this.props.isLoggedIn && !this.state.loading)
-  	// 	registerFunctions(this);
   	document.getElementsByClassName('filter-parent')[0].style.display='none';
   	document.getElementsByClassName('search-wrapper')[0].style.display='none';
   }
   componentDidUpdate(prevProps, prevState){
-  	// if(!this.state.loading && !this.props.isLoggedIn)
-  	// 	registerFunctions(this);
   }
   componentWillUnmount(){
   	document.getElementsByClassName('filter-parent')[0].style.display='block';
   	document.getElementsByClassName('search-wrapper')[0].style.display='block';
  
   }
+  handleClick = () =>{
+	if(!this.state.password || !this.state.username){
+		(document.getElementsByClassName('errorHere2'))[0].style.display = 'none';
+		(document.getElementsByClassName('errorHere'))[0].style.display = 'unset';
+	}
+	else if(!this.state.username.match(/^(?=[A-Za-z0-9][A-Za-z0-9@._%+-]{5,253}$)[A-Za-z0-9._%+-]{1,64}@(?:(?=[A-Za-z0-9-]{1,63}\.)[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*\.){1,8}[A-Za-z]{2,5}$/)){
+		(document.getElementsByClassName('errorHere'))[0].style.display = 'none';
+		(document.getElementsByClassName('errorHere2'))[0].style.display = 'unset';
+	}
+	else{
+		(document.getElementsByClassName('errorHere'))[0].style.display = 'none';
+		(document.getElementsByClassName('errorHere2'))[0].style.display = 'none';
+  		this.requestLogin();
+	}
+  }
 
   requestLogin = () =>{
-	this.setState({loading2: true});
-  	let error=false;
-	fetch('/api/signin', {
-		method: 'post',
-		headers: {'Content-type': 'application/json'},
-		body: JSON.stringify({
-			username: this.state.username,
-			password: this.state.password
+  	if(!this.state.loading2){
+		this.setState({loading2: true});
+	  	let error=false;
+		fetch('/api/signin', {
+			method: 'post',
+			headers: {'Content-type': 'application/json'},
+			body: JSON.stringify({
+				username: this.state.username,
+				password: this.state.password
+			})
 		})
-	})
-	.then(response => {
-		if(response.status!==200)
-			error=true;
-		return response.json()})
-	.then((user) => {
-		if(error)
-			throw(user);
-		this.updateAllData(user);
-		this.setState({
-			loading2: false
+		.then(response => {
+			if(response.status!==200)
+				error=true;
+			return response.json()})
+		.then((user) => {
+			if(error)
+				throw(user);
+			this.updateAllData(user);
+			this.setState({
+				loading2: false,
+				redirect: true
+			})
 		})
-	})
-	.catch(err => this.setState({errorRes: err}));
+		.catch(err => this.setState({errorRes: err, loading2: false}));
+	}
   }
 
   updateAllData = (user) => {
 	this.props.updateLoginState(true);
-	this.props.updateUser(user.user);
+	this.props.updateUserInfo(user);
   }
 
   render() {
@@ -93,55 +114,43 @@ class Login extends Component {
   		return <Redirect to='/dash' />
   	}
 
-  	if(this.state.username && this.state.password && !this.state.gotUserData){
-  		this.requestLogin();
-  	}
-
   	if(this.state.gotUserData && this.state.verification){
-  		return <Redirect to='/dash' />
+  		// return <Redirect to='/dash' />
   	}
-
+  	const error = this.state.errorRes;
     return (
   		
 	   	<div className='register-container pt6'>
-   		  <div id="progress"></div>
 		  <div className="center">
 		  	{
 	  		(loading)?
 	  			<Loader />
   			:
-		  		(false)?
-					<div className='f3 white'>
-						Please verify your email to continue.
-					</div>
-				:
-					(this.state.errorRes)?
-						<div className='f3 white'>
-							{this.state.errorRes}
-						</div>
-					:
-					    <div id="register">
-					    	<main className="pa4 black-80">
-							  <form className="measure center">
-							    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-							      <legend className="f4 fw6 ph0 mh0">Sign In</legend>
-							      <div className="mt3">
-							        <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-							        <input onClick={this.onEmailChange} className="pa2 input-reset ba bg-transparent hover-black w-100" type="email" name="email-address"  id="email-address" />
-							      </div>
-							      <div className="mv3">
-							        <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-							        <input onClick={this.onPassChange} className="b pa2 input-reset ba bg-transparent hover-black w-100" type="password" name="password"  id="password" />
-							      </div>
-							    </fieldset>
-							    <div className="">
-							      <div onClick={this.setState({gotUserData: true})} className="ph3 pv2 white input-reset ba bg-orange grow pointer f6 dib" type="submit" value="Sign in" >Sign in</div>
-							    </div>
-							    {(this.state.loading2)? <Loader /> : null}
-							  </form>
-							</main>
+		    	<main className="pa4 black-80">
+				  <form className="measure center">
+				    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
+				      <legend className="f4 fw6 ph0 mh0">Sign In</legend>
+				      <div className="mt3">
+				        <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
+				        <input onKeyPress={this._handleKeyPress} onChange={this.onEmailChange} className="pa2 input-reset ba bg-transparent hover-black w-100" type="email" name="email-address"  id="email-address" />
+				      </div>
+				      <div className="mv3">
+				        <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
+				        <input onKeyPress={this._handleKeyPress} onChange={this.onPassChange} className="b pa2 input-reset ba bg-transparent hover-black w-100" type="password" name="password"  id="password" />
+				      </div>
+				    </fieldset>
+				    <div className="">
+				      <div onClick={this.handleClick} className="ph3 pv2 white input-reset ba bg-orange grow pointer f6 dib" type="submit" value="Sign in" >Sign in</div>
+				    </div>
+				    {(this.state.loading2)? <Loader /> : null}
 
-					    </div>
+				  </form>
+				  	<div className='w-100 tc'>
+						<div className='errorHere red fw1'>All fields required</div>
+						<div className='errorHere2 red fw1'>Invalid Email</div>
+						<div className='red b fw1'>{this.state.errorRes.toString()}</div>
+					</div>
+				</main>
 			}
   		   </div>
 		</div>
